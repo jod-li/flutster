@@ -1,5 +1,7 @@
 library flutster;
 
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -480,11 +482,81 @@ class FlutsterTestRecord {
   }
 
   /// [share] is what is called when the user wants to share the record json.
-  void share() {
-    Share.share(
+  void share(
+    BuildContext context,
+  ) {
+    DateTime startDt = DateTime.now();
+    Share.shareWithResult(
       toJson(),
+      // "example",
       subject: testName,
-    );
+    ).then((ShareResult result) {
+      bool fallback = true;
+      if (DateTime.now().difference(startDt) >
+          const Duration(milliseconds: 1000)) {
+        fallback = false;
+      }
+      switch (result.status) {
+        case ShareResultStatus.unavailable:
+          if (!fallback) {
+            FlutsterTestRecorderState.snackStatic(
+              "Failed to share",
+              context,
+            );
+          }
+          break;
+        case ShareResultStatus.dismissed:
+          if (!fallback) {
+            FlutsterTestRecorderState.snackStatic(
+              "Share dismissed",
+              context,
+            );
+          }
+          break;
+        case ShareResultStatus.success:
+        default:
+          fallback = false;
+          break;
+      }
+      if (fallback) {
+        shareAsFile(context);
+      }
+    });
+  }
+
+  /// [shareAsFile] is a fallback in case share didn't work.
+  void shareAsFile(
+    BuildContext context,
+  ) {
+    var dir = Directory.systemTemp.createTempSync();
+    String path = "${dir.path}/$testName-flutster.txt";
+    File temp = File(path);
+    temp.createSync();
+    temp.writeAsString(toJson()).whenComplete(() {
+      Share.shareFilesWithResult(
+        [path],
+        subject: testName,
+      ).then((ShareResult result) {
+        switch (result.status) {
+          case ShareResultStatus.unavailable:
+            FlutsterTestRecorderState.snackStatic(
+              "Failed to share",
+              context,
+            );
+            break;
+          case ShareResultStatus.dismissed:
+            FlutsterTestRecorderState.snackStatic(
+              "Share dismissed",
+              context,
+            );
+            break;
+          case ShareResultStatus.success:
+          default:
+            break;
+        }
+        dir.deleteSync(recursive: true);
+      });
+    });
   }
 
   /// [apiSave] saves the record to https://flutster.com API
@@ -660,6 +732,7 @@ class FlutsterTestRecord {
   /// [play] runs the events and returns true in case all passed.
   Future<bool> play(WidgetTester tester,
       {List<FlutsterTestEvent>? results}) async {
+    bool ret = true;
     if (events.isEmpty) {
       debugPrint("Warning: no test events while playing!");
       return (false);
@@ -675,14 +748,14 @@ class FlutsterTestRecord {
         );
       }
       if (!result) {
-        return (false);
+        ret = false;
       }
       if (event.type != FlutsterTestEventType.key) {
         await tester.pumpAndSettle();
       }
     }
     await tester.pumpAndSettle();
-    return (true);
+    return (ret);
   }
 
   /// [combineAll] calls the first event combineAll method that will shrink
@@ -1030,7 +1103,7 @@ class FlutsterTestEvent {
 
   /// [recorderState] returns the [FlutsterTestRecorderState] displayed on the
   /// testing screen.
-  Future<FlutsterTestRecorderState?> recorderState({int retries = 100}) async {
+  Future<FlutsterTestRecorderState?> recorderState({int retries = 10}) async {
     if (flutsterTestRecorderState != null) {
       return (flutsterTestRecorderState!);
     }
@@ -1040,7 +1113,7 @@ class FlutsterTestEvent {
         " the state.");
     bool gotANewState = false;
     FlutsterTestRecorder? recorder;
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10; i++) {
       FlutsterTestRecorderState? holdingState;
       try {
         recorder = tester!.allWidgets.firstWhere((element) {
@@ -2683,7 +2756,9 @@ class FlutsterTestRecorderState extends State<FlutsterTestRecorder> {
 
   /// [share] is called when the user wants to share the Flutster test record.
   share() {
-    widget.flutsterTestRecord.share();
+    widget.flutsterTestRecord.share(
+      context,
+    );
     setState(() {});
   }
 
@@ -2809,7 +2884,7 @@ class FlutsterTestRecorderState extends State<FlutsterTestRecorder> {
     return (screenShotEvent);
   }
 
-  /// [takeScreenShot] takes the screenshot an saves the event in the record.
+  /// [takeScreenShot] takes the screenshot and saves the event in the record.
   Future<void> takeScreenShot(
       void Function(VoidCallback fn) updateParent) async {
     FlutsterTestEvent? screenShotEvent = await returnScreenShotEvent();
@@ -2824,7 +2899,16 @@ class FlutsterTestRecorderState extends State<FlutsterTestRecorder> {
 
   /// [snack] displays a snack with the given content (string or widget).
   void snack(dynamic content, [BuildContext? givenContext]) {
-    ScaffoldMessenger.of(givenContext ?? context).showSnackBar(SnackBar(
+    snackStatic(
+      content,
+      givenContext ?? context,
+    );
+  }
+
+  /// [snackStatic] displays a snack with the given content (string or widget).
+  /// This static function requires the context
+  static void snackStatic(dynamic content, BuildContext givenContext) {
+    ScaffoldMessenger.of(givenContext).showSnackBar(SnackBar(
       content: (content is Widget)
           ? content
           : (content is String)
@@ -3450,7 +3534,7 @@ class FlutsterTestRecorderState extends State<FlutsterTestRecorder> {
                   message: "Save test record without a screenshot?",
                   onOk: () {
                     save((content) {
-                      snack(content, content);
+                      snack(content, context);
                     }, () {
                       setState(() {});
                     });
@@ -3458,7 +3542,7 @@ class FlutsterTestRecorderState extends State<FlutsterTestRecorder> {
                 );
               } else {
                 save((content) {
-                  snack(content, content);
+                  snack(content, context);
                 }, () {
                   setState(() {});
                 });
