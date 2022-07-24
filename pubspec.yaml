@@ -20,3 +20,8 @@ dev_dependencies:
   flutter_lints: ^2.0.1
 
 flutter:
+  plugin:
+    platforms:
+      android:
+        package: li.jod.flutster
+        pluginClass: FlutsterPlugin
