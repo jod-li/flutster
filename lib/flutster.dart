@@ -1,3 +1,5 @@
+/// [flutster] library intended use is for Android.
+/// Refer to https://flutster.com for more details on how to use this plugin.
 library flutster;
 
 import 'dart:io';
@@ -892,7 +894,7 @@ class FlutsterTestEvent {
   /// [waitDuration] is the duration to wait before starting the event play.
   Duration? waitDuration;
 
-  /// [screenShot] is the [Image] of the screenshot.
+  /// [screenShot] is the Image of the screenshot.
   Image? screenShot;
 
   /// [screenShotBytes] holds the bytes of the screenshot image.
@@ -2474,6 +2476,9 @@ class FlutsterTestRecorder extends StatefulWidget {
   /// [createState] as with any StateFulWidget.
   @override
   State<FlutsterTestRecorder> createState() => FlutsterTestRecorderState();
+
+  /// [registerWith] is necessary for this dart only plugin
+  static void registerWith() {}
 }
 
 /// [FlutsterTestRecorderState] is the state of the [FlutsterTestRecorder].
@@ -3692,75 +3697,75 @@ class FlutsterTestRecorderState extends State<FlutsterTestRecorder> {
   }
 }
 
-/// [FlutsterScaffold] wraps a [Scaffold] within a [FlutsterTestRecorder].
+/// [FlutsterScaffold] wraps a Scaffold within a [FlutsterTestRecorder].
 class FlutsterScaffold extends StatelessWidget {
-  /// [appBar] please refer to [Scaffold].
+  /// [appBar] please refer to Scaffold.
   final PreferredSizeWidget? appBar;
 
-  /// [body] please refer to [Scaffold].
+  /// [body] please refer to Scaffold.
   final Widget? body;
 
-  /// [floatingActionButton] please refer to [Scaffold].
+  /// [floatingActionButton] please refer to Scaffold.
   final Widget? floatingActionButton;
 
-  /// [floatingActionButtonLocation] please refer to [Scaffold].
+  /// [floatingActionButtonLocation] please refer to Scaffold.
   final FloatingActionButtonLocation? floatingActionButtonLocation;
 
-  /// [floatingActionButtonAnimator] please refer to [Scaffold].
+  /// [floatingActionButtonAnimator] please refer to Scaffold.
   final FloatingActionButtonAnimator? floatingActionButtonAnimator;
 
-  /// [persistentFooterButtons] please refer to [Scaffold].
+  /// [persistentFooterButtons] please refer to Scaffold.
   final List<Widget>? persistentFooterButtons;
 
-  /// [drawer] please refer to [Scaffold].
+  /// [drawer] please refer to Scaffold.
   final Widget? drawer;
 
-  /// [onDrawerChanged] please refer to [Scaffold].
+  /// [onDrawerChanged] please refer to Scaffold.
   final DrawerCallback? onDrawerChanged;
 
-  /// [endDrawer] please refer to [Scaffold].
+  /// [endDrawer] please refer to Scaffold.
   final Widget? endDrawer;
 
-  /// [onEndDrawerChanged] please refer to [Scaffold].
+  /// [onEndDrawerChanged] please refer to Scaffold.
   final DrawerCallback? onEndDrawerChanged;
 
-  /// [bottomNavigationBar] please refer to [Scaffold].
+  /// [bottomNavigationBar] please refer to Scaffold.
   final Widget? bottomNavigationBar;
 
-  /// [bottomSheet] please refer to [Scaffold].
+  /// [bottomSheet] please refer to Scaffold.
   final Widget? bottomSheet;
 
-  /// [backgroundColor] please refer to [Scaffold].
+  /// [backgroundColor] please refer to Scaffold.
   final Color? backgroundColor;
 
-  /// [resizeToAvoidBottomInset] please refer to [Scaffold].
+  /// [resizeToAvoidBottomInset] please refer to Scaffold.
   final bool? resizeToAvoidBottomInset;
 
-  /// [primary] please refer to [Scaffold].
+  /// [primary] please refer to Scaffold.
   final bool primary;
 
-  /// [drawerDragStartBehavior] please refer to [Scaffold].
+  /// [drawerDragStartBehavior] please refer to Scaffold.
   final DragStartBehavior drawerDragStartBehavior;
 
-  /// [extendBody] please refer to [Scaffold].
+  /// [extendBody] please refer to Scaffold.
   final bool extendBody;
 
-  /// [extendBodyBehindAppBar] please refer to [Scaffold].
+  /// [extendBodyBehindAppBar] please refer to Scaffold.
   final bool extendBodyBehindAppBar;
 
-  /// [drawerScrimColor] please refer to [Scaffold].
+  /// [drawerScrimColor] please refer to Scaffold.
   final Color? drawerScrimColor;
 
-  /// [drawerEdgeDragWidth] please refer to [Scaffold].
+  /// [drawerEdgeDragWidth] please refer to Scaffold.
   final double? drawerEdgeDragWidth;
 
-  /// [drawerEnableOpenDragGesture] please refer to [Scaffold].
+  /// [drawerEnableOpenDragGesture] please refer to Scaffold.
   final bool drawerEnableOpenDragGesture;
 
-  /// [endDrawerEnableOpenDragGesture] please refer to [Scaffold].
+  /// [endDrawerEnableOpenDragGesture] please refer to Scaffold.
   final bool endDrawerEnableOpenDragGesture;
 
-  /// [restorationId] please refer to [Scaffold].
+  /// [restorationId] please refer to Scaffold.
   final String? restorationId;
 
   /// [flutsterTestRecord] if not given, the default is used.
@@ -3769,7 +3774,7 @@ class FlutsterScaffold extends StatelessWidget {
   /// [name] helps identify the right [FlutsterTestRecorderState] while running.
   final String? name;
 
-  /// [FlutsterScaffold] is a [Scaffold] with a [name] and a
+  /// [FlutsterScaffold] is a Scaffold with a name and a
   /// [flutsterTestRecord].
   FlutsterScaffold({
     Key? key,
