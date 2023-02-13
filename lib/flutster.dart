@@ -7,7 +7,6 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -535,8 +534,8 @@ class FlutsterTestRecord {
     File temp = File(path);
     temp.createSync();
     temp.writeAsString(toJson()).whenComplete(() {
-      Share.shareFilesWithResult(
-        [path],
+      Share.shareXFiles(
+        [XFile(path)],
         subject: testName,
       ).then((ShareResult result) {
         switch (result.status) {
@@ -3090,220 +3089,225 @@ class FlutsterTestRecorderState extends State<FlutsterTestRecorder> {
       dynamic content,
     )
         snackHere,
-  ) async {
+  ) {
     apiListingOngoing = true;
     updateUI();
     String? res;
     try {
-      res = await widget.flutsterTestRecord.apiListing();
-    } catch (e, st) {
-      res = "Failed to list test records from API";
-      debugPrint("$e $st");
-    }
-    try {
-      if (res.startsWith('{"error":')) {
-        Map<String, dynamic> err = jsonDecode(res);
-        String mess;
-        if (err.containsKey("message")) {
-          mess = " ";
-          mess += err["message"];
-        } else {
-          mess = "";
-        }
-        debugPrint(err["error"] + " " + mess);
-        if (mess.contains("<") && mess.contains(">")) {
-          mess = "";
-        }
-        snackHere("Failed to get API records: ${err["error"] + mess}");
-      } else if (!res.startsWith("{") && !res.startsWith("[")) {
-        snackHere("Failed to contact API: $res");
-      } else {
-        List<dynamic> resObj;
-        resObj = jsonDecode(res);
-        Map<String, dynamic> keys = {
-          "id": "API test record id",
-          "name": "Name",
-          "created": (value) => makeLabelValueBlock(
-              "Created", strDtToStr(value),
-              tooltip: value + " API time"),
-          "updated": (value) => makeLabelValueBlock(
-              "Updated", strDtToStr(value),
-              tooltip: value + " API time"),
-          "active": (value) => makeLabelValueBlock(
-              "Active", value.toString() == "1" ? "true" : "false"),
-          "emailOnSuccess": (value) => makeLabelValueBlock(
-              "Email on success", value.toString() == "1" ? "true" : "false"),
-          "emailOnFailure": (value) => makeLabelValueBlock(
-              "Email on failure", value.toString() == "1" ? "true" : "false"),
-          "notes": "Notes",
-        };
-        List<Widget> listing = [];
-        for (var entry in resObj) {
-          Map<String, dynamic> testRecordEntry = entry as Map<String, dynamic>;
-          listing.add(InkWell(
-            onTap: () {
-              apiLoad(
-                context,
-                updateUI,
-                int.tryParse(entry["id"].toString()),
-                (dynamic content) {
-                  snack(content, context);
+      widget.flutsterTestRecord.apiListing().then((value) {
+        res = value;
+        try {
+          if (res!.startsWith('{"error":')) {
+            Map<String, dynamic> err = jsonDecode(res!);
+            String mess;
+            if (err.containsKey("message")) {
+              mess = " ";
+              mess += err["message"];
+            } else {
+              mess = "";
+            }
+            debugPrint(err["error"] + " " + mess);
+            if (mess.contains("<") && mess.contains(">")) {
+              mess = "";
+            }
+            snackHere("Failed to get API records: ${err["error"] + mess}");
+          } else if (!res!.startsWith("{") && !res!.startsWith("[")) {
+            snackHere("Failed to contact API: $res");
+          } else {
+            List<dynamic> resObj;
+            resObj = jsonDecode(res!);
+            Map<String, dynamic> keys = {
+              "id": "API test record id",
+              "name": "Name",
+              "created": (value) => makeLabelValueBlock(
+                  "Created", strDtToStr(value),
+                  tooltip: value + " API time"),
+              "updated": (value) => makeLabelValueBlock(
+                  "Updated", strDtToStr(value),
+                  tooltip: value + " API time"),
+              "active": (value) => makeLabelValueBlock(
+                  "Active", value.toString() == "1" ? "true" : "false"),
+              "emailOnSuccess": (value) => makeLabelValueBlock(
+                  "Email on success",
+                  value.toString() == "1" ? "true" : "false"),
+              "emailOnFailure": (value) => makeLabelValueBlock(
+                  "Email on failure",
+                  value.toString() == "1" ? "true" : "false"),
+              "notes": "Notes",
+            };
+            List<Widget> listing = [];
+            for (var entry in resObj) {
+              Map<String, dynamic> testRecordEntry =
+                  entry as Map<String, dynamic>;
+              listing.add(InkWell(
+                onTap: () {
+                  apiLoad(
+                    context,
+                    updateUI,
+                    int.tryParse(entry["id"].toString()),
+                    (dynamic content) {
+                      snack(content, context);
+                    },
+                  );
+                  Navigator.of(context).pop();
                 },
-              );
-              Navigator.of(context).pop();
-            },
-            child: Card(
-              elevation: 7,
-              borderOnForeground: true,
-              shadowColor: Colors.grey,
-              margin: const EdgeInsets.all(8),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: keys
-                        .map<String, Widget>((key, label) {
-                          Widget w = const SizedBox.shrink();
-                          if (testRecordEntry.containsKey(key) &&
-                              testRecordEntry[key] != null) {
-                            dynamic value = testRecordEntry[key];
-                            if (value is String || value is int) {
-                              if (value.toString().isNotEmpty) {
-                                if (label is Function) {
-                                  w = label(value);
-                                } else {
-                                  w = makeLabelValueBlock(label, value);
+                child: Card(
+                  elevation: 7,
+                  borderOnForeground: true,
+                  shadowColor: Colors.grey,
+                  margin: const EdgeInsets.all(8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: keys
+                            .map<String, Widget>((key, label) {
+                              Widget w = const SizedBox.shrink();
+                              if (testRecordEntry.containsKey(key) &&
+                                  testRecordEntry[key] != null) {
+                                dynamic value = testRecordEntry[key];
+                                if (value is String || value is int) {
+                                  if (value.toString().isNotEmpty) {
+                                    if (label is Function) {
+                                      w = label(value);
+                                    } else {
+                                      w = makeLabelValueBlock(label, value);
+                                    }
+                                  }
                                 }
                               }
-                            }
-                          }
-                          return (MapEntry(
-                              key,
-                              Padding(
-                                padding: const EdgeInsets.all(3),
-                                child: w,
-                              )));
-                        })
-                        .values
-                        .toList()),
-              ),
-            ),
-          ));
-        }
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: listing.isNotEmpty
-                  ? const Text("Select API test record to load")
-                  : const Text(
-                      "No test record on API. Record and save one with the "
-                      "following actions:"),
-              content: SingleChildScrollView(
-                child: listing.isNotEmpty
-                    ? Column(
-                        children: listing,
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "1. Start recording:",
-                                ),
-                                startRecordingButton(context, setState,
-                                    (Function doInUpdate) {
-                                  doInUpdate();
-                                  updateUI();
-                                }),
-                              ],
-                            ),
-                          ),
-                          const Text(
-                            "2. Use scrcpy with computer keyboard to type text",
-                            softWrap: true,
-                          ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                const Text(
-                                  "3. Take screenshot(s):",
-                                ),
-                                takeScreenShotButton(context, setState,
-                                    (Function doInUpdate) {
-                                  doInUpdate();
-                                  updateUI();
-                                }),
-                              ],
-                            ),
-                          ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                const Text(
-                                  "4. Stop recording:",
-                                ),
-                                stopRecordingButton(context, setState,
-                                    (Function doInUpdate) {
-                                  doInUpdate();
-                                  updateUI();
-                                }),
-                              ],
-                            ),
-                          ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                const Text(
-                                  "5. Save test record to API:",
-                                ),
-                                saveTestRecordToApiButton(
-                                  context,
-                                  setState,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Text(
-                            "6. Run the integration testing with the recorded "
-                            "test record id.",
-                            softWrap: true,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text(
-                            "7. View the results on flutster.com .",
-                            softWrap: true,
-                          ),
-                        ],
-                      ),
-              ),
-              actions: [
-                ElevatedButton(
-                  child: const Text("cancel"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+                              return (MapEntry(
+                                  key,
+                                  Padding(
+                                    padding: const EdgeInsets.all(3),
+                                    child: w,
+                                  )));
+                            })
+                            .values
+                            .toList()),
+                  ),
                 ),
-              ],
+              ));
+            }
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: listing.isNotEmpty
+                      ? const Text("Select API test record to load")
+                      : const Text(
+                          "No test record on API. Record and save one with the "
+                          "following actions:"),
+                  content: SingleChildScrollView(
+                    child: listing.isNotEmpty
+                        ? Column(
+                            children: listing,
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "1. Start recording:",
+                                    ),
+                                    startRecordingButton(context, setState,
+                                        (Function doInUpdate) {
+                                      doInUpdate();
+                                      updateUI();
+                                    }),
+                                  ],
+                                ),
+                              ),
+                              const Text(
+                                "2. Use scrcpy with computer keyboard to type text",
+                                softWrap: true,
+                              ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      "3. Take screenshot(s):",
+                                    ),
+                                    takeScreenShotButton(context, setState,
+                                        (Function doInUpdate) {
+                                      doInUpdate();
+                                      updateUI();
+                                    }),
+                                  ],
+                                ),
+                              ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      "4. Stop recording:",
+                                    ),
+                                    stopRecordingButton(context, setState,
+                                        (Function doInUpdate) {
+                                      doInUpdate();
+                                      updateUI();
+                                    }),
+                                  ],
+                                ),
+                              ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      "5. Save test record to API:",
+                                    ),
+                                    saveTestRecordToApiButton(
+                                      context,
+                                      setState,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Text(
+                                "6. Run the integration testing with the recorded "
+                                "test record id.",
+                                softWrap: true,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                "7. View the results on flutster.com .",
+                                softWrap: true,
+                              ),
+                            ],
+                          ),
+                  ),
+                  actions: [
+                    ElevatedButton(
+                      child: const Text("cancel"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
             );
-          },
-        );
-      }
+          }
+        } catch (e, st) {
+          debugPrint("$e $st");
+          snackHere("Failed to get API records");
+        }
+        apiListingOngoing = false;
+        updateUI();
+      });
     } catch (e, st) {
+      snackHere("Failed to list test records from API");
       debugPrint("$e $st");
-      snackHere("Failed to get API records");
     }
-    apiListingOngoing = false;
-    updateUI();
   }
 
   /// [makeLabelValueBlock] uniformizes the display of labels with values.

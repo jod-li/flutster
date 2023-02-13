@@ -1,3 +1,8 @@
+## 1.0.2
+
+* Improved README. Thanks @nitinramadoss !
+* Updated following warnings from more recent Flutter version.
+
 ## 1.0.1
 
 * Making sure pub.dev shows only Android as compatible platform.

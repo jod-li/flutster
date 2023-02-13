@@ -2,10 +2,20 @@ import 'package:flutster/flutster.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  FlutsterTestRecord.defaultRecord.apiUrl = "https://flutster.com";
-  FlutsterTestRecord.defaultRecord.apiUser = "YOUR FLUTSTER USER";
-  FlutsterTestRecord.defaultRecord.apiKey = "YOUR FLUTSTER API KEY";
-
+  const flutsterKey = String.fromEnvironment("flutsterKey");
+  const flutsterUser = String.fromEnvironment("flutsterUser");
+  const flutsterUrl = String.fromEnvironment("flutsterUrl");
+  if (flutsterKey.isNotEmpty &&
+      flutsterUser.isNotEmpty &&
+      flutsterUrl.isNotEmpty) {
+    FlutsterTestRecord.defaultRecord.apiUrl = flutsterUrl;
+    FlutsterTestRecord.defaultRecord.apiUser = flutsterUser;
+    FlutsterTestRecord.defaultRecord.apiKey = flutsterKey;
+  } else {
+    FlutsterTestRecord.defaultRecord.apiUrl = "https://flutster.com";
+    FlutsterTestRecord.defaultRecord.apiUser = "YOUR FLUTSTER USER";
+    FlutsterTestRecord.defaultRecord.apiKey = "YOUR FLUTSTER API KEY";
+  }
   runApp(const MyApp());
 }
 

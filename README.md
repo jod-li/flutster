@@ -9,20 +9,20 @@ Easily detect errors in UI such as layout issues, unexpected behavior, and more 
 
 ## Use cases:
 * Recording user events such as clicks and taps on widgets
-* Track widget behavior and detect sources of UI jank
+* Track widget behavior and detect sources of UI issues
 * Compare widgets with screenshots for difference using a variety of algorithms
 * Simulate robo testing on Flutter apps
 * Store recordings of your application 
 
 ## What you can track
 Taps:
-* Time the tap occured
+* Time the tap occurred
 * Location of a tap
 * Duration of a tap
 * Widget tracking the event
 
 Keys:
-* Time the key press occured
+* Time the key press occurred
 * Character of key pressed
 * Duration of a key press
 * Widget tracking the event
@@ -44,7 +44,7 @@ An example of use for this plugin is available under the `example` folder.
 Add to pubspec.yaml
 ```
 dependencies:
-  flutster: ^1.0.1
+  flutster:
 ```
 
 Import:
