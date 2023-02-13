@@ -1,6 +1,36 @@
 # Flutster
 
-Easy Flutter app integration testing automation as replayable records.
+Easy Flutter app integration testing automation as replayable records. 
+
+## Purpose
+Conduct integration testing in a Flutter application by recording user events and comparing widget screenshots.
+
+Easily detect errors in UI such as layout issues, unexpected behavior, and more with Flutster. 
+
+## Use cases:
+* Recording user events such as clicks and taps on widgets
+* Track widget behavior and detect sources of UI jank
+* Compare widgets with screenshots for difference using a variety of algorithms
+* Simulate robo testing on Flutter apps
+* Store recordings of your application 
+
+## What you can track
+Taps:
+* Time the tap occured
+* Location of a tap
+* Duration of a tap
+* Widget tracking the event
+
+Keys:
+* Time the key press occured
+* Character of key pressed
+* Duration of a key press
+* Widget tracking the event
+
+Screenshots:
+* Time the screenshot was taken
+* Comparison function used to compare screenshots
+* Widget tracking the event
 
 ## Platforms
 
