@@ -371,8 +371,7 @@ class FlutsterTestRecord {
       dynamic matcher, {
       String? reason,
       dynamic skip,
-    })?
-        expect,
+    })? expect,
     FlutsterTestRecorderState? flutsterTestRecorderState,
     WidgetTester? tester,
   }) {
@@ -392,8 +391,7 @@ class FlutsterTestRecord {
       dynamic matcher, {
       String? reason,
       dynamic skip,
-    })?
-        expect,
+    })? expect,
     FlutsterTestRecorderState? flutsterTestRecorderState,
     WidgetTester? tester,
     int retries = 10,
@@ -3081,14 +3079,11 @@ class FlutsterTestRecorderState extends State<FlutsterTestRecorder> {
       int? testRecordId,
       Function(
         dynamic content,
-      )
-          snackHere,
-    )
-        apiLoad,
+      ) snackHere,
+    ) apiLoad,
     Function(
       dynamic content,
-    )
-        snackHere,
+    ) snackHere,
   ) {
     apiListingOngoing = true;
     updateUI();
