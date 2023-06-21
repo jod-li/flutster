@@ -1,3 +1,7 @@
+## 1.0.3
+
+* Upgraded dependencies.
+
 ## 1.0.2
 
 * Improved README. Thanks @nitinramadoss !
