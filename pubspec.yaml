@@ -12,7 +12,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  image_compare: ">=1.1.2 <2.0.0"
+#  image_compare: '>=1.1.2 <2.0.0'
+  image_compare:
+    git:
+      url: https://github.com/lcuis/image_compare.git
+#    path: ../image_compare
   flutter_test:
     sdk: flutter
   share_plus: ">=6.3.1 <8.0.0"
