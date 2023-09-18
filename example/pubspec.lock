@@ -103,7 +103,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.3"
+    version: "1.0.4"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -161,15 +161,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.17"
-  image_compare:
+  image_compare_2:
     dependency: transitive
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "2e763ef810811112e62ea0e972838b991bcacca6"
-      url: "https://github.com/lcuis/image_compare.git"
-    source: git
-    version: "1.1.2"
+      name: image_compare_2
+      sha256: "1da9a39e037fd047f8a5848968b7654131935a2ff871c192ac1fec055f5954b5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.4"
   integration_test:
     dependency: "direct dev"
     description: flutter

@@ -13,7 +13,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui show Image;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:image_compare/image_compare.dart';
+import 'package:image_compare_2/image_compare_2.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
