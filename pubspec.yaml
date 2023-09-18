@@ -1,6 +1,6 @@
 name: flutster
 description: Record your Flutter UI tests using this Widget on Android. Save the UI tests to play them again automatically.
-version: 1.0.5
+version: 1.0.4
 homepage: https://github.com/jod-li/flutster
 repository: https://github.com/jod-li/flutster
 issue_tracker: https://github.com/jod-li/flutster/issues
